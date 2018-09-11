@@ -5,14 +5,13 @@
 /// no other wrap modes are supported for now
 /// 
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
 public class ThreadableCurve
 {
-    public AnimationCurve curve;
+    [SerializeField]
+    private AnimationCurve curve;
 
     Keyframe[] keyframes;
 
@@ -35,12 +34,20 @@ public class ThreadableCurve
     /// <returns></returns>
     public float Evaluate(float t)
     {
+        if (keyframes == null || keyframes.Length == 0) return 0;
+        if (keyframes.Length == 1) return keyframes[0].value;
+
         if (t < keyframes[0].time)
             return keyframes[0].value;
 
         for (int i = 1; i < keyframes.Length; i++)
+        {
             if (t < keyframes[i].time)
-                return Evaluate(t, keyframes[i - 1], keyframes[i]);
+            {
+                float kt = Mathf.InverseLerp(keyframes[i - 1].time, keyframes[i].time, t);
+                return Evaluate(kt, keyframes[i - 1], keyframes[i]);
+            }
+        }
 
         return keyframes[keyframes.Length - 1].value;
     }
