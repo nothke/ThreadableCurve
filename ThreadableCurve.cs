@@ -5,6 +5,8 @@
 /// no other wrap modes are supported for now
 /// 
 
+#pragma warning disable CS0649
+
 using UnityEngine;
 
 [System.Serializable]
